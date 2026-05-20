@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Planter Box Viewer</title>
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.3.0/dist/model-viewer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --brown: #6b4226;
+    --cream: #f5f0e8;
+    --dark: #1a1a1a;
+  }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--green);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  header .icon { font-size: 24px; }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header p { font-size: 12px; opacity: 0.8; }
+
+  .viewer-wrap {
+    flex: 1;
+    position: relative;
+    background: #e8f4ec;
+    min-height: 60vh;
+  }
+
+  model-viewer {
+    width: 100%;
+    height: 65vh;
+    --progress-bar-color: var(--green-light);
+    --progress-bar-height: 3px;
+  }
+
+  .ar-btn-wrap {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  /* Override model-viewer AR button */
+  model-viewer::part(ar-button) {
+    background: var(--green);
+    border-radius: 30px;
+    color: white;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    padding: 12px 28px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.4);
+  }
+
+  .info-panel {
+    background: white;
+    border-top: 3px solid var(--green-light);
+    padding: 20px;
+  }
+
+  .info-panel h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+
+  .step-num {
+    background: var(--green);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .step p { font-size: 14px; line-height: 1.5; }
+
+  .no-ar-msg {
+    display: none;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    color: #856404;
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    background: var(--cream);
+    border: 1.5px solid var(--green-light);
+    color: var(--green);
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { background: var(--green); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="icon">🌿</div>
+  <div>
+    <h1>เกาะหลบภัย — AR Viewer</h1>
+    <p>ดูโมเดล 3D และวางในโลกจริงผ่านกล้อง</p>
+  </div>
+</header>
+
+<div class="viewer-wrap">
+  <model-viewer
+    id="mv"
+    src="planter.glb"
+    alt="Planter Box 3D Model"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-scale="auto"
+    camera-controls
+    auto-rotate
+    auto-rotate-delay="1000"
+    rotation-per-second="20deg"
+    shadow-intensity="1"
+    environment-image="neutral"
+    exposure="1.1"
+    touch-action="pan-y"
+  >
+    <button slot="ar-button" style="
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 13px 30px;
+      font-size: 16px;
+      font-family: 'Sarabun', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(45,106,79,0.45);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    ">
+      📷 วางในโลกจริง (AR)
+    </button>
+  </model-viewer>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="document.getElementById('mv').resetTurntableRotation()">🔄 รีเซ็ตมุมมอง</button>
+  <button class="ctrl-btn" onclick="toggleRotate()">⏸ หยุด/หมุน</button>
+  <button class="ctrl-btn" onclick="setEnv('neutral')">☀️ กลางวัน</button>
+  <button class="ctrl-btn" onclick="setEnv('legacy')">🌅 夕暮れ</button>
+</div>
+
+<div class="info-panel">
+  <h2>วิธีใช้งาน AR</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <p>เปิดหน้านี้บน <strong>มือถือ</strong> (iPhone หรือ Android) ไม่ใช่คอมพิวเตอร์</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <p>กดปุ่ม <strong>"📷 วางในโลกจริง (AR)"</strong> ด้านบน</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <p>ชี้กล้องไปที่<strong>พื้นราบ</strong> เช่น พื้นถนน ทางเท้า หรือพื้นสนาม</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <p>แตะจุดบนพื้นเพื่อ<strong>วางโมเดล</strong> แล้วเดินรอบดูได้เลย!</p>
+    </div>
+  </div>
+  <div class="no-ar-msg" id="no-ar">
+    ⚠️ อุปกรณ์นี้อาจไม่รองรับ AR — ลองใช้ iPhone 6s+ หรือ Android ที่รองรับ ARCore
+  </div>
+</div>
+
+<script>
+  let rotating = true;
+  const mv = document.getElementById('mv');
+
+  function toggleRotate() {
+    rotating = !rotating;
+    mv.autoRotate = rotating;
+  }
+
+  function setEnv(env) {
+    mv.environmentImage = env;
+  }
+
+  mv.addEventListener('ar-status', (e) => {
+    if (e.detail.status === 'failed') {
+      document.getElementById('no-ar').style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
